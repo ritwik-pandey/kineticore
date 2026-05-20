@@ -34,11 +34,14 @@ class DocumentIngestionHandler(FileSystemEventHandler):
             print("🚀 Triggering automatic ingestion pipeline...")
             
             try:
-              
                 time.sleep(1) 
                 process_and_store(file_path)
             except Exception as e:
                 print(f"   -> [ERROR] Failed to process file: {e}")
+            finally:
+                import sys
+                sys.stdout.write("\nYou: ")
+                sys.stdout.flush()
         else:
             print(f"\n⚠️ Ignored unsupported file type: {os.path.basename(file_path)}")
 
