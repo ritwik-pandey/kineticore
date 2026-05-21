@@ -2,7 +2,7 @@ import ollama
 
 def answer_question(chunks, user_query):
     context_text = "\n\n---\n\n".join([
-        f"Source: {chunk['source']} (Page {chunk['page']})\n{chunk['text']}" 
+        f"Source: {chunk.get('source', 'Unknown')} (Page {chunk.get('page', 'N/A')})\n{chunk.get('text', '')}" 
         for chunk in chunks
     ])
     print(context_text)
