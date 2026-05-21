@@ -4,6 +4,7 @@ from qdrant_client.models import Distance, VectorParams, PointStruct
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_core.documents import Document
 from langchain_community.retrievers import BM25Retriever
+from sentence_transformers import CrossEncoder
 
 
 client = QdrantClient(path="./qdrant_local_db")
@@ -130,5 +131,28 @@ def hybrid(query: str, top_k: int = 3):
             "source": data["source"],
             "hybrid_score": data["score"]
         })
-    return final_output
+    output = rerank_documents(query, final_output,3)
+    return output
+
+def rerank_documents(query: str, retrieved_chunks: list, top_k: int = 3):
+    reranker = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2")
+    print(f"\n🧠 Re-ranking {len(retrieved_chunks)} candidates...")
+    
+    if not retrieved_chunks:
+        return []
+
+    
+    sentence_pairs = []
+    for chunk in retrieved_chunks:
+        sentence_pairs.append([query, chunk["text"]])
+        
+   
+    scores = reranker.predict(sentence_pairs)
+    
+    for i, chunk in enumerate(retrieved_chunks):
+        chunk["rerank_score"] = float(scores[i])
+        
+    ranked_chunks = sorted(retrieved_chunks, key=lambda x: x["rerank_score"], reverse=True)
+    
+    return ranked_chunks[:top_k]
 
