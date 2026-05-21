@@ -1,10 +1,12 @@
 # KinetiCore
 
-KinetiCore is a Retrieval-Augmented Generation (RAG) pipeline application. It utilizes local components to ingest documents, generate vector embeddings, and retrieve context to answer queries using a Qdrant local database.
+KinetiCore is a Retrieval-Augmented Generation (RAG) pipeline application. It utilizes local components to automatically ingest documents via folder monitoring, generate vector embeddings, perform hybrid search with reranking, and retrieve context to answer queries using a Qdrant local database.
 
 ## Structure
 - `app/ingestion`: Data processing including loading PDFs and chunking text.
 - `app/database`: Management of vector embeddings via `qdrant-client`.
+- `app/monitoring`: Automatic file ingestion and folder monitoring.
+- `app/retrieval`: Hybrid search combining dense and sparse retrieval, along with a reranking pipeline.
 - `app/generation`: Local generation component for answering questions.
 - `requirements.txt`: Python dependencies.
 
